@@ -1,31 +1,34 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app id="inspire">
+    <NavigationDrawer />
+    <Toolbar />
+    <v-content>
+      <v-container fluid fill-height>
+        <v-layout justify-center align-center>
+          <router-view></router-view>
+        </v-layout>
+      </v-container>
+    </v-content>
+    <!-- <Form/> -->
+  </v-app>
 </template>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
+<script>
+  import NavigationDrawer from './components/NavigationDrawer.vue';
+  import Toolbar from './components/Toolbar.vue';
+  import FormBoilerplate from './components/FormBoilerplate.vue';
+  export default {
+    data: () => ({
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+    }),
+    components: {
+      NavigationDrawer,
+      Toolbar,
+      Form: FormBoilerplate
+    },
+    props: {
+      source: String
+    }
+  }
+</script>
