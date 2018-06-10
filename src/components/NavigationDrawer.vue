@@ -72,10 +72,10 @@ export default {
   computed: {
     drawer: {
       get () {
-        return this.$store.state.drawer;
+        return this.$store.state.drawer.show;
       },
       set (val) {
-        return this.$store.commit('toggleDrawer', val);
+        return this.$store.commit('drawer/toggleDrawer', val);
       }
     }
   },

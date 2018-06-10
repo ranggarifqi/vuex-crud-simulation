@@ -8,7 +8,7 @@
   >
     <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
       <v-toolbar-side-icon @click.stop="toggleDrawer(!drawer)"></v-toolbar-side-icon>
-      <span class="hidden-sm-and-down">Google Contacts</span>
+      <span class="hidden-sm-and-down">Ranggo CMS</span>
     </v-toolbar-title>
     <v-text-field
       flat
@@ -18,20 +18,21 @@
       class="hidden-sm-and-down"
     ></v-text-field>
     <v-spacer></v-spacer>
-    <v-btn icon>
+    <!-- <v-btn icon>
       <v-icon>apps</v-icon>
-    </v-btn>
-    <v-btn icon>
-      <v-icon>notifications</v-icon>
-    </v-btn>
-    <v-btn icon large>
-      <v-avatar size="32px" tile>
-        <img
-          src="https://vuetifyjs.com/static/doc-images/logo.svg"
-          alt="Vuetify"
-        >
-      </v-avatar>
-    </v-btn>
+    </v-btn> -->
+    <v-menu offset-y>
+      <v-btn slot="activator" icon dark>
+        <v-icon>more_vert</v-icon>
+      </v-btn>
+      <v-list>
+        <v-list-tile @click="">
+          <v-list-tile-title>Logout</v-list-tile-title>
+        </v-list-tile>
+      </v-list>
+    </v-menu>
+
+
   </v-toolbar>
 </template>
 
@@ -40,11 +41,11 @@ import { mapMutations } from 'vuex';
 export default {
   computed: {
     drawer(){
-      return this.$store.state.drawer;
+      return this.$store.state.drawer.show;
     }
   },
   methods: {
-    ...mapMutations([
+    ...mapMutations('drawer', [
       'toggleDrawer'
     ])
   }

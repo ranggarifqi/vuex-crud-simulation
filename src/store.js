@@ -3,16 +3,21 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
+import DrawerModule from './modules/drawer';
+
 export default new Vuex.Store({
-  state: {
-    drawer: true,
-  },
-  mutations: {
-    toggleDrawer: (state, payload) => {
-      state.drawer = payload;
-    }
-  },
-  actions: {
-    
+  modules: {
+    drawer: DrawerModule
   }
+  // state: {
+  //   drawer: true,
+  // },
+  // mutations: {
+  //   toggleDrawer: (state, payload) => {
+  //     state.drawer = payload;
+  //   }
+  // },
+  // actions: {
+  //
+  // }
 })
