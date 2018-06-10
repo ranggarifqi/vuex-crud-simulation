@@ -1,33 +1,8 @@
 <template>
-  <v-app id="inspire">
-    <NavigationDrawer />
-    <Toolbar />
-    <v-content>
-      <v-container fluid fill-height>
-        <v-layout justify-center align-center>
-          <router-view></router-view>
-        </v-layout>
-      </v-container>
-    </v-content>
-    <!-- <Form/> -->
-  </v-app>
+  <router-view></router-view>
 </template>
 
 <script>
-  import NavigationDrawer from './components/NavigationDrawer.vue';
-  import Toolbar from './components/Toolbar.vue';
-  import FormBoilerplate from './components/FormBoilerplate.vue';
   export default {
-    data: () => ({
-
-    }),
-    components: {
-      NavigationDrawer,
-      Toolbar,
-      Form: FormBoilerplate
-    },
-    props: {
-      source: String
-    }
   }
 </script>

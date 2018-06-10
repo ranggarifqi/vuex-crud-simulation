@@ -9,15 +9,4 @@ export default new Vuex.Store({
   modules: {
     drawer: DrawerModule
   }
-  // state: {
-  //   drawer: true,
-  // },
-  // mutations: {
-  //   toggleDrawer: (state, payload) => {
-  //     state.drawer = payload;
-  //   }
-  // },
-  // actions: {
-  //
-  // }
 })
