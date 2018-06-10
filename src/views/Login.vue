@@ -11,8 +11,8 @@
               </v-toolbar>
               <v-card-text>
                 <v-form>
-                  <v-text-field prepend-icon="person" name="email" label="Email" type="email"></v-text-field>
-                  <v-text-field id="password" prepend-icon="lock" name="password" label="Password" type="password"></v-text-field>
+                  <v-text-field prepend-icon="person" name="email" label="Email" type="email" v-model="email"></v-text-field>
+                  <v-text-field id="password" prepend-icon="lock" name="password" label="Password" type="password" v-model="password"></v-text-field>
                 </v-form>
               </v-card-text>
               <v-card-actions>
@@ -30,10 +30,25 @@
 <script>
   export default {
     data: () => ({
-      drawer: null
+
     }),
-    props: {
-      source: String
+    computed: {
+      email: {
+        get(){
+          return this.$store.state.login.email;
+        },
+        set(value){
+          this.$store.commit('login/emailVal', value);
+        }
+      },
+      password: {
+        get(){
+          return this.$store.state.login.password;
+        },
+        set(value){
+          this.$store.commit('login/passwordVal', value);
+        }
+      },
     }
   }
 </script>
