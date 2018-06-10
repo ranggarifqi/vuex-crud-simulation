@@ -3,6 +3,7 @@ import actions from './actions';
 import mutations from './mutations';
 
 const state = {
+  isLoading: false,
   email: '',
   password: ''
 }

@@ -17,7 +17,14 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" @click="login">Login</v-btn>
+                <v-btn
+                  :loading="isLoading"
+                  :disabled="isLoading"
+                  color="primary"
+                  @click="login"
+                >
+                  Login
+                </v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -34,10 +41,14 @@
     }),
     methods: {
       login() {
-        console.log(this.email, this.password);
+        this.$store.commit('login/toggleLoading', !this.isLoading);
+        this.$store.dispatch('login/loginAction', { email: this.email, password: this.password });
       }
     },
     computed: {
+      isLoading(){
+        return this.$store.state.login.isLoading;
+      },
       email: {
         get(){
           return this.$store.state.login.email;
