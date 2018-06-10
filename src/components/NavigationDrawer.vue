@@ -4,6 +4,7 @@
     v-model="drawer"
     fixed
     app
+
   >
     <v-list dense>
       <template v-for="item in items">
@@ -68,9 +69,18 @@
 
 <script>
 export default {
+  computed: {
+    drawer: {
+      get () {
+        return this.$store.state.drawer;
+      },
+      set (val) {
+        return this.$store.commit('toggleDrawer', val);
+      }
+    }
+  },
   data () {
       return {
-        drawer: null,
         items: [
           { icon: 'contacts', text: 'Contacts' },
           { icon: 'history', text: 'Frequently contacted' },

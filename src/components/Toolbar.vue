@@ -7,7 +7,7 @@
     fixed
   >
     <v-toolbar-title style="width: 300px" class="ml-0 pl-3">
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-side-icon @click.stop="toggleDrawer(!drawer)"></v-toolbar-side-icon>
       <span class="hidden-sm-and-down">Google Contacts</span>
     </v-toolbar-title>
     <v-text-field
@@ -36,7 +36,18 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
 export default {
+  computed: {
+    drawer(){
+      return this.$store.state.drawer;
+    }
+  },
+  methods: {
+    ...mapMutations([
+      'toggleDrawer'
+    ])
+  }
 }
 </script>
 
