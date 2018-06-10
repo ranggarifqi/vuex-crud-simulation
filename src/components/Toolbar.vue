@@ -26,7 +26,7 @@
         <v-icon>more_vert</v-icon>
       </v-btn>
       <v-list>
-        <v-list-tile @click="">
+        <v-list-tile @click="logout">
           <v-list-tile-title>Logout</v-list-tile-title>
         </v-list-tile>
       </v-list>
@@ -47,7 +47,11 @@ export default {
   methods: {
     ...mapMutations('drawer', [
       'toggleDrawer'
-    ])
+    ]),
+    logout(){
+      localStorage.removeItem('access_token');
+      return this.$router.push('/login');
+    }
   }
 }
 </script>
