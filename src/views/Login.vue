@@ -9,8 +9,8 @@
                 <v-toolbar-title>Please Login to Continue</v-toolbar-title>
                 <v-spacer></v-spacer>
               </v-toolbar>
-              <v-card-text>
-                <v-form>
+              <v-form>
+                <v-card-text>
                   <v-text-field
                     prepend-icon="person"
                     name="email"
@@ -34,19 +34,20 @@
                     @input="$v.password.$touch()"
                     @blur="$v.password.$touch()"
                   ></v-text-field>
-                </v-form>
-              </v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  :loading="isLoading"
-                  :disabled="isLoading"
-                  color="primary"
-                  @click="login"
-                >
-                  Login
-                </v-btn>
-              </v-card-actions>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    type="submit"
+                    :loading="isLoading"
+                    :disabled="isLoading"
+                    color="primary"
+                    @click="login"
+                  >
+                    Login
+                  </v-btn>
+                </v-card-actions>
+              </v-form>
             </v-card>
           </v-flex>
         </v-layout>
@@ -67,7 +68,9 @@
 
     }),
     methods: {
-      login() {
+      login(e) {
+        e.preventDefault();
+
         this.$v.$touch();
         if (this.$v.$invalid) {
           console.log('validation error');
