@@ -11,6 +11,14 @@ export default new Router({
     {
       path: '/login',
       name: 'login',
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('access_token');
+        if(token){
+          return next('/');
+        }
+
+        return next();
+      },
       component: Login
     },
     {
