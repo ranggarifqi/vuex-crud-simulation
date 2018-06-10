@@ -17,7 +17,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="primary">Login</v-btn>
+                <v-btn color="primary" @click="login">Login</v-btn>
               </v-card-actions>
             </v-card>
           </v-flex>
@@ -32,6 +32,11 @@
     data: () => ({
 
     }),
+    methods: {
+      login() {
+        console.log(this.email, this.password);
+      }
+    },
     computed: {
       email: {
         get(){
