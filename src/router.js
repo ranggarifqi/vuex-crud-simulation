@@ -15,13 +15,21 @@ export default new Router({
     },
     {
       path: '/',
-      name: 'home',
       component: AdminTemplate,
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('access_token');
+        if(!token){
+          return next('/login');
+        }
+
+        return next();
+      },
       children: [
         {
           path: '',
+          name: 'home',
           component: Home
-        }
+        },
       ]
     }
   ]
