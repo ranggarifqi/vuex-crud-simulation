@@ -6,6 +6,7 @@ export default {
     setTimeout(() => {
       if (email == 'admin@admin.com' && password == 'admin') {
         localStorage.setItem('access_token', 'lololololololo');
+        localStorage.setItem('user_id', 1);
         context.commit('reset');
         router.push('/');
       } else {
