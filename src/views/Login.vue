@@ -53,11 +53,13 @@
         </v-layout>
       </v-container>
     </v-content>
+    <notifications group="notification" position="bottom right"/>
   </v-app>
 </template>
 
 <script>
-  import { required, email } from 'vuelidate/lib/validators'
+  import { required, email } from 'vuelidate/lib/validators';
+  import { mapState, mapMutations } from 'vuex';
 
   export default {
     validations: {
@@ -68,6 +70,9 @@
 
     }),
     methods: {
+      ...mapMutations('notify', [
+        'disableNotify'
+      ]),
       login(e) {
         e.preventDefault();
 
@@ -81,9 +86,10 @@
       }
     },
     computed: {
-      isLoading(){
-        return this.$store.state.login.isLoading;
-      },
+      ...mapState({
+        isLoading: state => state.login.isLoading,
+        showNotify: state => state.notify.show
+      }),
       email: {
         get(){
           return this.$store.state.login.email;
@@ -112,6 +118,19 @@
         if (!this.$v.password.$dirty) return errors
         !this.$v.password.required && errors.push('Password is required')
         return errors
+      }
+    },
+    watch: {
+      showNotify(){
+        if (this.showNotify) {
+          this.$notify({
+            title: this.$store.state.notify.title,
+            text: this.$store.state.notify.text,
+            type: this.$store.state.notify.type,
+            group: 'notification',
+          });
+        }
+        this.disableNotify();
       }
     }
   }

@@ -7,11 +7,14 @@ export default {
       if (email == 'admin@admin.com' && password == 'admin') {
         localStorage.setItem('access_token', 'lololololololo');
         context.commit('reset');
-        console.log('benar!');
         router.push('/');
       } else {
-        console.log('salah!');
         context.commit('reset');
+        context.commit('notify/showNotify', {
+          title: 'Login Failed',
+          text: 'Wrong Email or Password',
+          type: 'error'
+        }, { root: true });
       }
     }, 3000);
   }
