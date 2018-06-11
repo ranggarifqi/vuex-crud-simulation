@@ -10,6 +10,7 @@
       </v-container>
     </v-content>
     <!-- <Form/> -->
+    <notifications group="notification" position="bottom right"/>
   </v-app>
 </template>
 

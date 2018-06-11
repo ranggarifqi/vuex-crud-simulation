@@ -9,7 +9,7 @@ export default {
     state.isLoading = payload;
   },
   reset: (state) => {
-    state.email = '';
+    // state.email = '';
     state.password = '';
     state.isLoading = false;
   }
