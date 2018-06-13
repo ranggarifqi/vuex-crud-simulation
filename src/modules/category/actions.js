@@ -2,6 +2,7 @@ export default {
   FETCH_DATA: ({ commit }) => {
     //Use `fetch` or `axios` to send API Request.
     //For Simulation, use setTimeout()
+    commit('loading');
     setTimeout(()=>{
       const results = [
         {

@@ -1,6 +1,7 @@
 export default {
   loading: state => {
     state.loading = true;
+    state.datas = [];
   },
   saveLoading: state => {
     state.saveLoading = true;
@@ -12,11 +13,11 @@ export default {
     state.datas = payload;
     state.loading = false;
   },
-  editItem: (state, payload) => {
+  edit: (state, payload) => {
     state.editedIndex = state.datas.indexOf(payload);
     state.editedItem = Object.assign({}, payload);
   },
-  deleteItem: (state, payload) => {
+  delete: (state, payload) => {
     state.datas.splice(payload, 1);
     state.deleteLoading = false;
   },
@@ -31,8 +32,8 @@ export default {
 
     state.saveLoading = false;
   },
-  reset: () => {
+  resetForm: (state) => {
     state.editedItem = Object.assign({}, state.defaultItem)
-    state.editedIndex = -1
-  }
+    state.editedIndex = -1;
+  },
 }

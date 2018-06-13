@@ -24,7 +24,7 @@
               <v-flex xs12 sm6 md4>
                 <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
               </v-flex>
-              <v-flex xs12 sm6 md4>
+              <!-- <v-flex xs12 sm6 md4>
                 <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
               </v-flex>
               <v-flex xs12 sm6 md4>
@@ -35,7 +35,7 @@
               </v-flex>
               <v-flex xs12 sm6 md4>
                 <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-              </v-flex>
+              </v-flex> -->
             </v-layout>
           </v-container>
         </v-card-text>
@@ -50,7 +50,7 @@
       :headers="headers"
       :items="datas"
       class="elevation-1"
-      loading="false"
+      :loading="loading"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
@@ -65,9 +65,6 @@
           </v-btn>
         </td>
       </template>
-      <template slot="no-data">
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
     </v-data-table>
   </v-flex>
 </template>
@@ -75,40 +72,32 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import { mapState, mapActions, mapMutations } from 'vuex';
 
 export default {
     data: () => ({
       dialog: false,
       headers: [
-        // {
-        //   text: 'Dessert (100g serving)',
-        //   align: 'left',
-        //   sortable: false,
-        //   value: 'name'
-        // },
         { text: 'Category Name', value: 'name' },
         { text: 'Parent Category', value: 'parent' },
         { text: 'Is Active', value: 'is_active' },
         { text: 'Actions', value: 'actions', sortable: false }
       ],
-      datas: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        parent: 0,
-        is_active: 0
-      },
-      defaultItem: {
-        name: '',
-        parent: 0,
-        is_active: 0
-      }
     }),
 
     computed: {
+      ...mapState({
+        loading: state => state.category.loading,
+        saveLoading: state => state.category.saveLoading,
+        deleteLoading: state => state.category.deleteLoading,
+        datas: state => state.category.datas,
+        editedIndex: state => state.category.editedIndex,
+        editedItem: state => state.category.editedItem,
+        defaultItem: state => state.category.defaultItem,
+      }),
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      }
+      },
     },
 
     watch: {
@@ -122,48 +111,38 @@ export default {
     },
 
     methods: {
+      ...mapActions('category',[
+        'FETCH_DATA'
+      ]),
+      ...mapMutations('category',[
+        'edit',
+        'resetForm'
+      ]),
       initialize () {
-        this.datas = [
-          {
-            name: 'Komputer',
-            parent: 0,
-            is_active: 1
-          },
-          {
-            name: 'Makanan',
-            parent: 0,
-            is_active: 1
-          }
-        ]
+        this.FETCH_DATA();
       },
-
       editItem (item) {
-        this.editedIndex = this.datas.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        this.edit(item);
+        this.dialog = true;
       },
-
       deleteItem (item) {
         const index = this.datas.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.datas.splice(index, 1)
+        // confirm('Are you sure you want to delete this item?') && this.datas.splice(index, 1)
       },
-
       close () {
         this.dialog = false
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
+          this.resetForm();
         }, 300)
       },
-
       save () {
-        if (this.editedIndex > -1) {
-          // Edit Data
-          Object.assign(this.datas[this.editedIndex], this.editedItem)
-        } else {
-          // Create New Data
-          this.datas.push(this.editedItem)
-        }
+        // if (this.editedIndex > -1) {
+        //   // Edit Data
+        //   Object.assign(this.datas[this.editedIndex], this.editedItem)
+        // } else {
+        //   // Create New Data
+        //   this.datas.push(this.editedItem)
+        // }
         this.close()
       }
     }
