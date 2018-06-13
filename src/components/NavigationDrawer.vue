@@ -6,6 +6,18 @@
     app
 
   >
+    <v-toolbar flat class="transparent">
+      <v-list class="pa-0">
+        <v-list-tile avatar>
+          <v-list-tile-avatar>
+            <img src="https://randomuser.me/api/portraits/men/85.jpg" >
+          </v-list-tile-avatar>
+          <v-list-tile-content>
+            <v-list-tile-title>John Leider</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
+      </v-list>
+    </v-toolbar>
     <v-list dense>
       <template v-for="item in items">
         <v-layout
@@ -28,7 +40,7 @@
           v-model="item.model"
           :key="item.text"
           :prepend-icon="item.model ? item.icon : item['icon-alt']"
-          append-icon=""
+          append-icon="keyboard_arrow_down"
         >
           <v-list-tile slot="activator">
             <v-list-tile-content>
@@ -40,7 +52,7 @@
           <v-list-tile
             v-for="(child, i) in item.children"
             :key="i"
-            @click=""
+            @click="redirect(child.action)"
           >
             <v-list-tile-action v-if="child.icon">
               <v-icon>{{ child.icon }}</v-icon>
@@ -82,37 +94,36 @@ export default {
   data () {
       return {
         items: [
-          { icon: 'contacts', text: 'Contacts' },
-          { icon: 'history', text: 'Frequently contacted' },
-          { icon: 'content_copy', text: 'Duplicates' },
+          { icon: 'home', text: 'Home' },
           {
-            icon: 'keyboard_arrow_up',
-            'icon-alt': 'keyboard_arrow_down',
-            text: 'Labels',
-            model: true,
-            children: [
-              { icon: 'add', text: 'Create label' }
-            ]
-          },
-          {
-            icon: 'keyboard_arrow_up',
-            'icon-alt': 'keyboard_arrow_down',
-            text: 'More',
+            icon: 'category',
+            'icon-alt': 'category',
+            text: 'Category',
             model: false,
             children: [
-              { text: 'Import' },
-              { text: 'Export' },
-              { text: 'Print' },
-              { text: 'Undo changes' },
-              { text: 'Other contacts' }
+              { icon: 'list', text: 'Show All Data', action: '/categories' }
             ]
           },
+          // {
+          //   icon: 'keyboard_arrow_up',
+          //   'icon-alt': 'keyboard_arrow_down',
+          //   text: 'More',
+          //   model: false,
+          //   children: [
+          //     { text: 'Import' },
+          //     { text: 'Export' },
+          //     { text: 'Print' },
+          //     { text: 'Undo changes' },
+          //     { text: 'Other contacts' }
+          //   ]
+          // },
           { icon: 'settings', text: 'Settings' },
-          { icon: 'chat_bubble', text: 'Send feedback' },
-          { icon: 'help', text: 'Help' },
-          { icon: 'phonelink', text: 'App downloads' },
-          { icon: 'keyboard', text: 'Go to the old version' }
         ]
+      }
+    },
+    methods: {
+      redirect(route) {
+        return this.$router.push(route);
       }
     }
 }
