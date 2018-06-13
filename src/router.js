@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import AdminTemplate from './AdminTemplate.vue'
 import Home from './views/Home.vue'
 import Login from './views/Login.vue';
+import Categories from './views/Categories.vue';
 
 Vue.use(Router)
 
@@ -37,6 +38,11 @@ export default new Router({
           path: '',
           name: 'home',
           component: Home
+        },
+        {
+          path: 'categories',
+          name: 'categories',
+          component: Categories
         },
       ]
     }
