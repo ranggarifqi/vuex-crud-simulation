@@ -48,16 +48,14 @@
     </v-dialog>
     <v-data-table
       :headers="headers"
-      :items="desserts"
-      hide-actions
+      :items="datas"
       class="elevation-1"
+      loading="false"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.calories }}</td>
-        <td class="text-xs-right">{{ props.item.fat }}</td>
-        <td class="text-xs-right">{{ props.item.carbs }}</td>
-        <td class="text-xs-right">{{ props.item.protein }}</td>
+        <td class="text-xs-right">{{ props.item.parent }}</td>
+        <td class="text-xs-right">{{ props.item.is_active }}</td>
         <td class="justify-center layout px-0">
           <v-btn icon class="mx-0" @click="editItem(props.item)">
             <v-icon color="teal">edit</v-icon>
@@ -82,33 +80,28 @@ export default {
     data: () => ({
       dialog: false,
       headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'name', sortable: false }
+        // {
+        //   text: 'Dessert (100g serving)',
+        //   align: 'left',
+        //   sortable: false,
+        //   value: 'name'
+        // },
+        { text: 'Category Name', value: 'name' },
+        { text: 'Parent Category', value: 'parent' },
+        { text: 'Is Active', value: 'is_active' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
-      desserts: [],
+      datas: [],
       editedIndex: -1,
       editedItem: {
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
+        parent: 0,
+        is_active: 0
       },
       defaultItem: {
         name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
+        parent: 0,
+        is_active: 0
       }
     }),
 
@@ -130,33 +123,29 @@ export default {
 
     methods: {
       initialize () {
-        this.desserts = [
+        this.datas = [
           {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0
+            name: 'Komputer',
+            parent: 0,
+            is_active: 1
           },
           {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3
+            name: 'Makanan',
+            parent: 0,
+            is_active: 1
           }
         ]
       },
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.datas.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        const index = this.datas.indexOf(item)
+        confirm('Are you sure you want to delete this item?') && this.datas.splice(index, 1)
       },
 
       close () {
@@ -169,9 +158,11 @@ export default {
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          // Edit Data
+          Object.assign(this.datas[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+          // Create New Data
+          this.datas.push(this.editedItem)
         }
         this.close()
       }
