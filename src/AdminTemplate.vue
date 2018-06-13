@@ -3,9 +3,13 @@
     <NavigationDrawer />
     <Toolbar />
     <v-content>
-      <v-container fluid fill-height>
+      <v-container
+        fluid
+        fill-height
+        tag="section"
+      >
         <!-- <v-layout justify-center align-center> -->
-        <v-layout>
+        <v-layout row wrap>
           <router-view></router-view>
         </v-layout>
       </v-container>

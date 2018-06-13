@@ -4,7 +4,7 @@
     v-model="drawer"
     fixed
     app
-
+    dark
   >
     <v-toolbar flat class="transparent">
       <v-list class="pa-0">
