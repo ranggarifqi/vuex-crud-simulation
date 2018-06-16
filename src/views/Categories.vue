@@ -14,37 +14,41 @@
       >
         <v-icon>add</v-icon>
       </v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-              </v-flex>
-              <!-- <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-              </v-flex> -->
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
+      <v-form>
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ formTitle }}</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                  <v-text-field
+                    v-model="name"
+                    :error-messages="nameErrors"
+                    required
+                    @input="$v.name.$touch()"
+                    @blur="$v.name.$touch()"
+                    label="Category Name"
+                  >
+                  </v-text-field>
+                <!-- <v-flex xs12 sm6 md4>
+                  <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+                </v-flex> -->
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <div v-if="saveLoading">
+              <v-progress-circular indeterminate color="green"></v-progress-circular>
+            </div>
+            <div v-else>
+              <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+              <v-btn type="submit" color="blue darken-1" flat @click.native="save">Save</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
     <v-data-table
       :headers="headers"
@@ -73,6 +77,7 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import { mapState, mapActions, mapMutations } from 'vuex';
+import { required, maxLength, email } from 'vuelidate/lib/validators';
 
 export default {
     data: () => ({
@@ -84,7 +89,9 @@ export default {
         { text: 'Actions', value: 'actions', sortable: false }
       ],
     }),
-
+    validations: {
+      name: { required }
+    },
     computed: {
       ...mapState({
         loading: state => state.category.loading,
@@ -92,11 +99,24 @@ export default {
         deleteLoading: state => state.category.deleteLoading,
         datas: state => state.category.datas,
         editedIndex: state => state.category.editedIndex,
-        editedItem: state => state.category.editedItem,
         defaultItem: state => state.category.defaultItem,
       }),
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
+      },
+      name: {
+        get(){
+          return this.$store.state.category.editedItem.name;
+        },
+        set(val){
+          this.nameVal(val);
+        }
+      },
+      nameErrors () {
+        const errors = [];
+        if (!this.$v.name.$dirty) return errors;
+        !this.$v.name.required && errors.push('Name is required.');
+        return errors;
       },
     },
 
@@ -112,10 +132,12 @@ export default {
 
     methods: {
       ...mapActions('category',[
-        'FETCH_DATA'
+        'FETCH_DATA',
+        'SAVE_DATA'
       ]),
       ...mapMutations('category',[
         'edit',
+        'nameVal',
         'resetForm'
       ]),
       initialize () {
@@ -135,15 +157,17 @@ export default {
           this.resetForm();
         }, 300)
       },
-      save () {
-        // if (this.editedIndex > -1) {
-        //   // Edit Data
-        //   Object.assign(this.datas[this.editedIndex], this.editedItem)
-        // } else {
-        //   // Create New Data
-        //   this.datas.push(this.editedItem)
-        // }
-        this.close()
+      save (e) {
+        e.preventDefault();
+
+        this.$v.$touch();
+        if (this.$v.$invalid) {
+          console.log('validation error');
+        } else {
+          this.SAVE_DATA().then((success) => {
+            if (success) this.close();
+          });
+        }
       }
     }
   }

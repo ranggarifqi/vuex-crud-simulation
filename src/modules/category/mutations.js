@@ -32,6 +32,12 @@ export default {
 
     state.saveLoading = false;
   },
+  nameVal: (state, payload) => {
+    state.editedItem.name = payload;
+  },
+  parentVal: (state, payload) => {
+    state.editedItem.parent = payload;
+  },
   resetForm: (state) => {
     state.editedItem = Object.assign({}, state.defaultItem)
     state.editedIndex = -1;

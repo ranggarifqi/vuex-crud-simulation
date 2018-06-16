@@ -18,5 +18,14 @@ export default {
       ];
       commit('setDatas', results);
     }, 3000);
+  },
+  SAVE_DATA: ({ commit }) => {
+    return new Promise((resolve, reject) => {
+      commit('saveLoading');
+      setTimeout(() => {
+        commit('save');
+        resolve(true);
+      }, 3000);
+    });
   }
 }
