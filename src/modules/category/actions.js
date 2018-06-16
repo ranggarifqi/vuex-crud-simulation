@@ -41,5 +41,13 @@ export default {
         resolve(true);
       }, 3000);
     });
-  }
+  },
+  SOFTDELETE_DATA: ({ commit, state }, payload) => {
+    setTimeout(() => {
+      commit('edit', payload);
+      commit('is_activeVal', !state.editedItem.is_active);
+      commit('save');
+      return Promise.resolve(true);
+    },300);
+  },
 }

@@ -76,9 +76,13 @@
       :loading="loading"
     >
       <template slot="items" slot-scope="props">
+        <td>{{ props.index + 1 }}</td>
         <td>{{ props.item.name }}</td>
         <td class="text-xs-right">{{ props.item.parent }}</td>
-        <td class="text-xs-right">{{ props.item.is_active }}</td>
+        <!-- <td class="text-xs-right">{{ props.item.is_active }}</td> -->
+        <td class="text-xs-right">
+          <v-switch label="" :input-value="props.item.is_active" @change="softDeleteItem(props.item)" ></v-switch>
+        </td>
         <td class="justify-center layout px-0">
           <v-btn icon class="mx-0" @click="editItem(props.item)">
             <v-icon color="teal">edit</v-icon>
@@ -104,6 +108,7 @@ export default {
       dialogDelete: false,
       itemWillBeDeleted: {},
       headers: [
+        { text: 'No', value: 'no' },
         { text: 'Category Name', value: 'name' },
         { text: 'Parent Category', value: 'parent' },
         { text: 'Is Active', value: 'is_active' },
@@ -158,7 +163,8 @@ export default {
       ...mapActions('category',[
         'FETCH_DATA',
         'SAVE_DATA',
-        'DELETE_DATA'
+        'DELETE_DATA',
+        'SOFTDELETE_DATA'
       ]),
       ...mapMutations('category',[
         'edit',
@@ -171,6 +177,9 @@ export default {
       editItem (item) {
         this.edit(item);
         this.dialog = true;
+      },
+      softDeleteItem(item){
+        this.SOFTDELETE_DATA(item).then(success => success && this.resetForm());
       },
       deleteItem () {
         const index = this.datas.indexOf(this.itemWillBeDeleted);

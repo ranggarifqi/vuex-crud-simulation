@@ -35,8 +35,8 @@ export default {
   nameVal: (state, payload) => {
     state.editedItem.name = payload;
   },
-  parentVal: (state, payload) => {
-    state.editedItem.parent = payload;
+  is_activeVal: (state, payload) => {
+    state.editedItem.is_active = payload;
   },
   resetForm: (state) => {
     state.editedItem = Object.assign({}, state.defaultItem)
