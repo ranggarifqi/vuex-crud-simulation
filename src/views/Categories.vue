@@ -2,7 +2,26 @@
   <v-flex>
     <v-flex tag="h1" class="headline">Categories</v-flex>
 
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-model="dialogDelete" max-width="500px" persistent>
+      <v-card>
+        <v-card-title>Delete Confirmation</v-card-title>
+        <v-card-text>
+          Are you sure want to delete this data ?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <div v-if="deleteLoading">
+            <v-progress-circular indeterminate color="green"></v-progress-circular>
+          </div>
+          <div v-else>
+            <v-btn color="blue darken-1" flat @click.stop="dialogDelete=false">Cancel</v-btn>
+            <v-btn type="submit" color="blue darken-1" flat @click.stop="deleteItem">Delete</v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialog" max-width="500px" persistent>
       <v-btn
         fixed
         slot="activator"
@@ -14,61 +33,60 @@
       >
         <v-icon>add</v-icon>
       </v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm6 md4>
-                <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="save">Save</v-btn>
-        </v-card-actions>
-      </v-card>
+      <v-form>
+        <v-card>
+          <v-card-title>
+            <span class="headline">{{ formTitle }}</span>
+          </v-card-title>
+          <v-card-text>
+            <v-container grid-list-md>
+              <v-layout wrap>
+                  <v-text-field
+                    v-model="name"
+                    :error-messages="nameErrors"
+                    required
+                    @input="$v.name.$touch()"
+                    @blur="$v.name.$touch()"
+                    label="Category Name"
+                  >
+                  </v-text-field>
+                <!-- <v-flex xs12 sm6 md4>
+                  <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
+                </v-flex> -->
+              </v-layout>
+            </v-container>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <div v-if="saveLoading">
+              <v-progress-circular indeterminate color="green"></v-progress-circular>
+            </div>
+            <div v-else>
+              <v-btn color="blue darken-1" flat @click.native="close">Cancel</v-btn>
+              <v-btn type="submit" color="blue darken-1" flat @click.native="save">Save</v-btn>
+            </div>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
     <v-data-table
       :headers="headers"
-      :items="desserts"
-      hide-actions
+      :items="datas"
       class="elevation-1"
+      :loading="loading"
     >
       <template slot="items" slot-scope="props">
         <td>{{ props.item.name }}</td>
-        <td class="text-xs-right">{{ props.item.calories }}</td>
-        <td class="text-xs-right">{{ props.item.fat }}</td>
-        <td class="text-xs-right">{{ props.item.carbs }}</td>
-        <td class="text-xs-right">{{ props.item.protein }}</td>
+        <td class="text-xs-right">{{ props.item.parent }}</td>
+        <td class="text-xs-right">{{ props.item.is_active }}</td>
         <td class="justify-center layout px-0">
           <v-btn icon class="mx-0" @click="editItem(props.item)">
             <v-icon color="teal">edit</v-icon>
           </v-btn>
-          <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+          <v-btn icon class="mx-0" @click.stop="dialogDelete = true; itemWillBeDeleted = props.item;">
             <v-icon color="pink">delete</v-icon>
           </v-btn>
         </td>
-      </template>
-      <template slot="no-data">
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
       </template>
     </v-data-table>
   </v-flex>
@@ -77,50 +95,58 @@
 <script>
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
+import { mapState, mapActions, mapMutations } from 'vuex';
+import { required, maxLength, email } from 'vuelidate/lib/validators';
 
 export default {
     data: () => ({
       dialog: false,
+      dialogDelete: false,
+      itemWillBeDeleted: {},
       headers: [
-        {
-          text: 'Dessert (100g serving)',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'name', sortable: false }
+        { text: 'Category Name', value: 'name' },
+        { text: 'Parent Category', value: 'parent' },
+        { text: 'Is Active', value: 'is_active' },
+        { text: 'Actions', value: 'actions', sortable: false }
       ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0
-      }
     }),
-
+    validations: {
+      name: { required }
+    },
     computed: {
+      ...mapState({
+        loading: state => state.category.loading,
+        saveLoading: state => state.category.saveLoading,
+        deleteLoading: state => state.category.deleteLoading,
+        datas: state => state.category.datas,
+        editedIndex: state => state.category.editedIndex,
+        defaultItem: state => state.category.defaultItem,
+      }),
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      }
+        return this.editedIndex === -1 ? 'New Data' : 'Edit Data'
+      },
+      name: {
+        get(){
+          return this.$store.state.category.editedItem.name;
+        },
+        set(val){
+          this.nameVal(val);
+        }
+      },
+      nameErrors () {
+        const errors = [];
+        if (!this.$v.name.$dirty) return errors;
+        !this.$v.name.required && errors.push('Name is required.');
+        return errors;
+      },
     },
 
     watch: {
       dialog (val) {
-        val || this.close()
+        val || this.close();
+      },
+      dialogDelete (val) {
+        if (!val) this.itemWillBeDeleted = {};
       }
     },
 
@@ -129,51 +155,45 @@ export default {
     },
 
     methods: {
+      ...mapActions('category',[
+        'FETCH_DATA',
+        'SAVE_DATA',
+        'DELETE_DATA'
+      ]),
+      ...mapMutations('category',[
+        'edit',
+        'nameVal',
+        'resetForm'
+      ]),
       initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3
-          }
-        ]
+        this.FETCH_DATA();
       },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        this.edit(item);
+        this.dialog = true;
       },
-
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+      deleteItem () {
+        const index = this.datas.indexOf(this.itemWillBeDeleted);
+        this.DELETE_DATA(index).then(success => success && (this.dialogDelete = false));
       },
-
       close () {
         this.dialog = false
         setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
+          this.resetForm();
         }, 300)
       },
 
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+      save (e) {
+        e.preventDefault();
+
+        this.$v.$touch();
+        if (this.$v.$invalid) {
+          console.log('validation error');
         } else {
-          this.desserts.push(this.editedItem)
+          this.SAVE_DATA().then((success) => {
+            if (success) this.close();
+          });
         }
-        this.close()
       }
     }
   }
