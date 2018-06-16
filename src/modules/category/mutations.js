@@ -21,7 +21,7 @@ export default {
     state.datas.splice(payload, 1);
     state.deleteLoading = false;
   },
-  save: (state, payload) => {
+  save: (state) => {
     if (state.editedIndex > -1) {
       // Edit Data
       Object.assign(state.datas[state.editedIndex], state.editedItem);

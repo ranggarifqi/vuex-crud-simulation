@@ -2,6 +2,25 @@
   <v-flex>
     <v-flex tag="h1" class="headline">Categories</v-flex>
 
+    <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-card>
+        <v-card-title>Delete Confirmation</v-card-title>
+        <v-card-text>
+          Are you sure want to delete this data ?
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <div v-if="deleteLoading">
+            <v-progress-circular indeterminate color="green"></v-progress-circular>
+          </div>
+          <div v-else>
+            <v-btn color="blue darken-1" flat @click.stop="dialogDelete=false">Cancel</v-btn>
+            <v-btn type="submit" color="blue darken-1" flat @click.stop="deleteItem">Delete</v-btn>
+          </div>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
     <v-dialog v-model="dialog" max-width="500px">
       <v-btn
         fixed
@@ -64,7 +83,7 @@
           <v-btn icon class="mx-0" @click="editItem(props.item)">
             <v-icon color="teal">edit</v-icon>
           </v-btn>
-          <v-btn icon class="mx-0" @click="deleteItem(props.item)">
+          <v-btn icon class="mx-0" @click.stop="dialogDelete = true; itemWillBeDeleted = props.item;">
             <v-icon color="pink">delete</v-icon>
           </v-btn>
         </td>
@@ -82,6 +101,8 @@ import { required, maxLength, email } from 'vuelidate/lib/validators';
 export default {
     data: () => ({
       dialog: false,
+      dialogDelete: false,
+      itemWillBeDeleted: {},
       headers: [
         { text: 'Category Name', value: 'name' },
         { text: 'Parent Category', value: 'parent' },
@@ -122,7 +143,10 @@ export default {
 
     watch: {
       dialog (val) {
-        val || this.close()
+        val || this.close();
+      },
+      dialogDelete (val) {
+        if (!val) this.itemWillBeDeleted = {};
       }
     },
 
@@ -133,7 +157,8 @@ export default {
     methods: {
       ...mapActions('category',[
         'FETCH_DATA',
-        'SAVE_DATA'
+        'SAVE_DATA',
+        'DELETE_DATA'
       ]),
       ...mapMutations('category',[
         'edit',
@@ -147,9 +172,9 @@ export default {
         this.edit(item);
         this.dialog = true;
       },
-      deleteItem (item) {
-        const index = this.datas.indexOf(item)
-        // confirm('Are you sure you want to delete this item?') && this.datas.splice(index, 1)
+      deleteItem () {
+        const index = this.datas.indexOf(this.itemWillBeDeleted);
+        this.DELETE_DATA(index).then(success => this.dialogDelete = false);
       },
       close () {
         this.dialog = false
@@ -157,6 +182,7 @@ export default {
           this.resetForm();
         }, 300)
       },
+
       save (e) {
         e.preventDefault();
 

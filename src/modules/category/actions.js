@@ -14,7 +14,12 @@ export default {
           name: 'Makanan',
           parent: 0,
           is_active: 1
-        }
+        },
+        {
+          name: 'Minuman',
+          parent: 0,
+          is_active: 1
+        },
       ];
       commit('setDatas', results);
     }, 3000);
@@ -24,6 +29,15 @@ export default {
       commit('saveLoading');
       setTimeout(() => {
         commit('save');
+        resolve(true);
+      }, 3000);
+    });
+  },
+  DELETE_DATA: ({ commit }, payload) => {
+    return new Promise ((resolve, reject) => {
+      commit('deleteLoading');
+      setTimeout(() => {
+        commit('delete', payload);
         resolve(true);
       }, 3000);
     });
