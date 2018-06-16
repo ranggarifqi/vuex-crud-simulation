@@ -2,7 +2,7 @@
   <v-flex>
     <v-flex tag="h1" class="headline">Categories</v-flex>
 
-    <v-dialog v-model="dialogDelete" max-width="500px">
+    <v-dialog v-model="dialogDelete" max-width="500px" persistent>
       <v-card>
         <v-card-title>Delete Confirmation</v-card-title>
         <v-card-text>
@@ -21,7 +21,7 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialog" max-width="500px">
+    <v-dialog v-model="dialog" max-width="500px" persistent>
       <v-btn
         fixed
         slot="activator"
@@ -174,7 +174,7 @@ export default {
       },
       deleteItem () {
         const index = this.datas.indexOf(this.itemWillBeDeleted);
-        this.DELETE_DATA(index).then(success => this.dialogDelete = false);
+        this.DELETE_DATA(index).then(success => success && (this.dialogDelete = false));
       },
       close () {
         this.dialog = false
